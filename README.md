@@ -29,14 +29,28 @@ Important mapping rule:
 - When you upload leads to NLPearl, map that same value to NLPearl's `externalId`
 - The webhook receiver uses `externalId` first, and falls back to `phoneNumber`, to update the correct row
 
-Recommended NLPearl call variables:
+Current NLPearl variables detected from your setup:
 
-- `attending`
-- `guestCount`
-- `mealChoice`
-- `songRequest`
-- `dietaryRestrictions`
-- `notes`
+Pre-call:
+
+- `firstName`
+- `lastName`
+- `emailAddress`
+- `phoneNumber`
+- `localPhoneNumber`
+- `weddingVenue`
+- `groomName`
+- `brideName`
+- `weddingDate`
+
+Collected in-call:
+
+- `rsvpStatus`
+- `totalGuests`
+- `dietaryNotes`
+- `followUpRequired`
+- `followUpDate`
+- `airtableRecordId`
 
 ## NLPearl settings
 

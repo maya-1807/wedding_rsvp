@@ -25,10 +25,14 @@ const GUEST_COLUMNS = [
   "call_status",
   "conversation_status",
   "attending",
+  "rsvp_status",
   "guest_count",
   "meal_choice",
   "song_request",
   "dietary_restrictions",
+  "follow_up_required",
+  "follow_up_date",
+  "airtable_record_id",
   "rsvp_notes",
   "last_summary",
   "last_updated_at",
@@ -247,6 +251,67 @@ function stringifyCollectedData(collectedData) {
   return JSON.stringify(collectedData);
 }
 
+function updateGuestFromCollectedData(guest, collectedData) {
+  if (!collectedData || typeof collectedData !== "object") {
+    return;
+  }
+
+  if (collectedData.attending != null) {
+    guest.attending = normalizeBoolean(collectedData.attending);
+  }
+
+  if (collectedData.rsvpStatus != null) {
+    guest.rsvp_status = String(collectedData.rsvpStatus);
+
+    const normalizedStatus = String(collectedData.rsvpStatus).trim().toLowerCase();
+    if (["confirmed", "yes", "attending"].includes(normalizedStatus)) {
+      guest.attending = "yes";
+    } else if (["declined", "no", "not attending"].includes(normalizedStatus)) {
+      guest.attending = "no";
+    }
+  }
+
+  if (collectedData.guestCount != null) {
+    guest.guest_count = String(collectedData.guestCount);
+  }
+
+  if (collectedData.totalGuests != null) {
+    guest.guest_count = String(collectedData.totalGuests);
+  }
+
+  if (collectedData.mealChoice != null) {
+    guest.meal_choice = String(collectedData.mealChoice);
+  }
+
+  if (collectedData.songRequest != null) {
+    guest.song_request = String(collectedData.songRequest);
+  }
+
+  if (collectedData.dietaryRestrictions != null) {
+    guest.dietary_restrictions = String(collectedData.dietaryRestrictions);
+  }
+
+  if (collectedData.dietaryNotes != null) {
+    guest.dietary_restrictions = String(collectedData.dietaryNotes);
+  }
+
+  if (collectedData.followUpRequired != null) {
+    guest.follow_up_required = normalizeBoolean(collectedData.followUpRequired);
+  }
+
+  if (collectedData.followUpDate != null) {
+    guest.follow_up_date = String(collectedData.followUpDate);
+  }
+
+  if (collectedData.airtableRecordId != null) {
+    guest.airtable_record_id = String(collectedData.airtableRecordId);
+  }
+
+  if (collectedData.notes != null) {
+    guest.rsvp_notes = String(collectedData.notes);
+  }
+}
+
 function extractCollectedDataFromCall(payload) {
   const collectedData = {};
 
@@ -286,30 +351,7 @@ function updateGuestFromLeadWebhook(payload) {
   guest.lead_status = payload.status || guest.lead_status;
   guest.last_updated_at = new Date().toISOString();
   guest.raw_collected_data = stringifyCollectedData(collectedData);
-
-  if (collectedData.attending != null) {
-    guest.attending = normalizeBoolean(collectedData.attending);
-  }
-
-  if (collectedData.guestCount != null) {
-    guest.guest_count = String(collectedData.guestCount);
-  }
-
-  if (collectedData.mealChoice != null) {
-    guest.meal_choice = String(collectedData.mealChoice);
-  }
-
-  if (collectedData.songRequest != null) {
-    guest.song_request = String(collectedData.songRequest);
-  }
-
-  if (collectedData.dietaryRestrictions != null) {
-    guest.dietary_restrictions = String(collectedData.dietaryRestrictions);
-  }
-
-  if (collectedData.notes != null) {
-    guest.rsvp_notes = String(collectedData.notes);
-  }
+  updateGuestFromCollectedData(guest, collectedData);
 
   saveGuests(guests);
 
@@ -342,30 +384,7 @@ function updateGuestFromCallWebhook(payload) {
   if (Object.keys(collectedData).length > 0) {
     guest.raw_collected_data = stringifyCollectedData(collectedData);
   }
-
-  if (collectedData.attending != null) {
-    guest.attending = normalizeBoolean(collectedData.attending);
-  }
-
-  if (collectedData.guestCount != null) {
-    guest.guest_count = String(collectedData.guestCount);
-  }
-
-  if (collectedData.mealChoice != null) {
-    guest.meal_choice = String(collectedData.mealChoice);
-  }
-
-  if (collectedData.songRequest != null) {
-    guest.song_request = String(collectedData.songRequest);
-  }
-
-  if (collectedData.dietaryRestrictions != null) {
-    guest.dietary_restrictions = String(collectedData.dietaryRestrictions);
-  }
-
-  if (collectedData.notes != null) {
-    guest.rsvp_notes = String(collectedData.notes);
-  }
+  updateGuestFromCollectedData(guest, collectedData);
 
   saveGuests(guests);
 
