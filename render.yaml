@@ -2,7 +2,6 @@ services:
   - type: web
     name: wedding-rsvp-webhooks
     runtime: node
-    plan: free
     buildCommand: npm install
     startCommand: npm start
     autoDeploy: true
