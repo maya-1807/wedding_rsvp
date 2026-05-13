@@ -1,0 +1,9 @@
+{
+  "name": "rsvp-webhooks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal NLPearl webhook receiver for wedding RSVP calls",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
